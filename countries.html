@@ -1,0 +1,96 @@
+<html>
+  <head>
+    <style>
+      ul {
+        list-style-type: none;
+        display: flex;
+        flex-wrap: wrap;
+        text-align: center;
+        gap: 20px;
+      }
+      li {
+        border: 2px solid;
+        padding: 5px;
+        border-radius: 20px;
+      }
+      img {
+        width: 100px;
+        height: auto;
+        text-align: center;
+        padding: 10px;
+      }
+      div {
+        width: 200px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <center>
+      <input type="search" id="searchBar" />
+    </center>
+    <ul id="r"></ul>
+
+    <script>
+      let countriesData = []; // Store fetched country data here
+
+      // Fetch country data
+      fetch("https://restcountries.com/v3/all")
+        .then(function (response) {
+          response.json().then((data) => {
+            countriesData = data; // Save the data globally
+            displayCountries(countriesData); // Initially display all countries
+          });
+        });
+
+      // Function to display countries based on data
+      function displayCountries(data) {
+        document.getElementById("r").innerHTML = ""; // Clear previous results
+        data.forEach((o) => {
+          var nli = document.createElement("li");
+
+          // Country Name
+          var countryName = document.createElement("div");
+          countryName.innerHTML = "Country: " + o.name.common;
+          nli.appendChild(countryName);
+
+          // Flag
+          var img = document.createElement("img");
+          img.src = o.flags[0];
+          nli.appendChild(img);
+
+          // Region
+          var reg = document.createElement("div");
+          reg.innerHTML = "Region: " + o.region;
+          nli.appendChild(reg);
+
+          // Capital
+          var cap = document.createElement("div");
+          cap.innerHTML = "Capital: " + (o.capital ? o.capital[0] : "N/A");
+          nli.appendChild(cap);
+
+          // Status
+          var stat = document.createElement("div");
+          stat.innerHTML = "Status: " + o.status;
+          nli.appendChild(stat);
+
+          // Population
+          var pop = document.createElement("div");
+          pop.innerHTML = "Population: " + o.population.toLocaleString();
+          nli.appendChild(pop);
+
+          document.getElementById("r").appendChild(nli);
+        });
+      }
+
+      // Event listener for search input
+      document.getElementById("searchBar").addEventListener("input", function () {
+        const searchTerm = this.value.toLowerCase();
+        const filteredCountries = countriesData.filter((country) =>
+          country.name.common.toLowerCase().includes(searchTerm)
+        );
+        displayCountries(filteredCountries)
+      });
+    </script>
+  </body>
+</html>
